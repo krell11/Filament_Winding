@@ -3,33 +3,32 @@ import math
 
 
 class Wrapp:
-    def __int__(self, func, radius, n, phi):
+    def __init__(self, func, radius, n, phi):
         self.func = func
         self.radius = 2 * np.pi * radius
         self.x = np.linspace(0, self.radius, 10000)
-        self.linear_functions = np.empty(0, 0)
-        self.intersections = np.empty(0, 0)
         self.n = n
         self.phi = phi * (np.pi/180)
+        self.interceptions = np.empty((0, 2))
 
-    def generate_surface(self, func, radius):
-                x_start = np.linspace(0, self.radius / 2, 10000)
-                height = max(self.func(x_start))
-
-    def generate_spirals(self, func, radius, n, phi, height):
-        start_points_x = np.linspace(0, self.radius, self.n)
-        x = np.linspace(0, self.radius, 10000)
-        for i in range(self.n+1):
-            row = ([])
-            for j in range(x):
-                while math.tan(self.phi) * j + self.radius - (self.radius / (i+1)) < max(self.func):
-                    new_point = np.array([j, abs(math.tan(self.phi) * j + self.radius - (self.radius / i))])
-                    row = np.vstack(row, new_point)
+    def create_spirals(self, func, radius, n, phi, height):
+        linear_points = np.empty((0, 2))
+        for i in range(self.n):
+            for j in self.x:
+                f_val = math.tan(self.phi) * j + abs(self.radius / (i + 2) - self.radius)
+                if f_val <= self.func:
+                    new_point = np.array([j, f_val])
+                    linear_points = np.vstack((linear_points, new_point))
                     if j == self.radius:
-                        self.generate_spirals(self.func, self.radius, self.n, self.phi, math.tan(self.phi) * j +
-                                              self.radius - (self.radius / (i+1)))
-                    self.linear_functions = np.append(self.linear_functions, row, axis=0)
+                        self.create_spirals(func, radius, n, phi, f_val)
                 else:
                     break
-        return self.linear_functions
+        return linear_points
+
+    def find_interceptions(self, linear_points):
+        for i in range(len(linear_points)):
+            for j in range(i + 1, len(linear_points)):
+                if linear_points[i] == linear_points[j]:
+                    self.interceptions = np.vstack(self.interceptions, linear_points[i])
+        return self.interceptions
 
