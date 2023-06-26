@@ -7,7 +7,7 @@ class Wrapp:
     def __init__(self, func, radius, n, phi):
         self.func = func
         self.radius = 2 * np.pi * radius
-        self.x = np.linspace(1, self.radius + 1, 10)
+        self.x = np.linspace(0, self.radius, 3)
         self.n = n
         self.phi = phi * (np.pi/180)
         self.interceptions = np.empty((0, 2))
@@ -24,21 +24,24 @@ class Wrapp:
             if f_val <= self.func:
                 new_point = np.array([j, f_val])
                 self.linear_points = np.vstack((self.linear_points, new_point))
-                if j >= self.radius:
+                if j == self.radius:
                     tmp = self.create_spirals(0, f_val)
             else:
+                j = 0
                 break
         if tmp.size == 0:
             return self.linear_points
         else:
             return np.vstack((self.linear_points, tmp))
 
-    def n_spirals(self, n):
+    def n_spirals(self):
         mass_point = np.empty((0, 2))
-        for i in range(n+1):
+        for i in range(self.n):
             startpoint = self.radius - self.radius/(i+1)
-            tmp = self.create_spirals(startpoint, 0)
-            mass_point = np.vstack((mass_point, tmp))
+            print(startpoint)
+            tmp_i = self.create_spirals(startpoint, 0)
+            print(tmp_i)
+            mass_point = np.vstack((mass_point, tmp_i))
         return mass_point
 
     def find_interceptions(self, linear_points):
@@ -53,10 +56,16 @@ class Wrapp:
         plt.scatter(x, y)
         plt.show()
 
+    def back_wrapp(self):
+        points = self.n_spirals()
+        fin_points = np.empty((0,3))
+        #for i in points:
+# доделать приближение с малой хордой dx и дугой окружности, по идее там приближение будет достаточно
+
+
 
 a = Wrapp(10, 3, 2, 20)
-b = a.n_spirals(3)
+print(a)
+b = a.n_spirals()
 c = a.find_interceptions(b)
 d = a.plotter(b)
-print(c)
-
