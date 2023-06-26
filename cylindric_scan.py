@@ -7,7 +7,7 @@ class Wrapp:
     def __init__(self, func, radius, n, phi):
         self.func = func
         self.radius = 2 * np.pi * radius
-        self.x = np.linspace(0, self.radius, 3)
+        self.x = np.linspace(0, self.radius, 100)
         self.n = n
         self.phi = phi * (np.pi/180)
         self.interceptions = np.empty((0, 2))
