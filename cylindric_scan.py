@@ -27,7 +27,6 @@ class Wrapp:
                 if j == self.radius:
                     tmp = self.create_spirals(0, f_val)
             else:
-                j = 0
                 break
         if tmp.size == 0:
             return self.linear_points
