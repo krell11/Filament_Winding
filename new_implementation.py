@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import math
+
 np.set_printoptions(suppress=True)
 
 
@@ -28,16 +29,19 @@ class Wrapp:
         total_height = 0
         angle = 0
         while total_height <= self.height:
-            x = round(self.r * math.cos(angle + coordinates), 3)
-            y = round(self.r * math.sin(angle + coordinates), 3)
-            z = abs(round(angle * self.h_calc(self.phi), 3))
+            x = round(self.r * math.cos(angle + coordinates), 5)
+            y = round(self.r * math.sin(angle + coordinates), 5)
+            z = abs(round(angle * self.h_calc(self.phi), 5))
+            total_height = z
+            if total_height >= self.height:
+                break
             point = np.array([[x, y, z]])
             points = np.vstack((points, point))
-            total_height = z
             angle += step
         return points
 
     def plotter_cylindric_shape(self, points):
+        points = np.array(points)
         x = points[:, 0]
         y = points[:, 1]
         z = points[:, 2]
@@ -48,7 +52,7 @@ class Wrapp:
             colors[index] = 'red'
         fig = plt.figure()
         ax = fig.add_subplot(111, projection='3d')
-        ax.scatter(x, y, z, c=colors)
+        ax.scatter(x, y, z)
         plt.show()
 
     def calculate_angles(self, n):
@@ -71,20 +75,9 @@ class Wrapp:
         start_points = self.calculate_angles(self.n)
         # start_points = self.calculate_start_coordinates(self.calculate_angles(self.n)) не работает
         for i in range(self.n):
-            spiral = self.create_spirals(start_points[i], 0.02)
+            spiral = self.create_spirals(start_points[i], 0.04)
             spirals = np.vstack((spirals, spiral))
-            spiral1 = self.create_spirals(start_points[i], -0.02)
+            spiral1 = self.create_spirals(start_points[i], -0.04)
             spirals1 = np.vstack((spirals1, spiral1))
         combined_spirals = np.vstack((spirals, spirals1))
         return combined_spirals
-
-    def find_interceptions(self, all_points, tolerance):
-
-        return
-
-a = Wrapp(height=100, r=2, phi=2, n=9, clearance=1000)
-# есть недочет, нормально работает только  нечетными n
-b = a.create_multiple_spirals()
-c = a.plotter_cylindric_shape(b)
-duplicate_points = a.find_interceptions(b, 0.05)
-c = a.plotter_cylindric_shape(duplicate_points)
